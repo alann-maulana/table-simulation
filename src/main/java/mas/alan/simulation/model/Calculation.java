@@ -46,7 +46,7 @@ public class Calculation {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("- total Tarif : Rp").append(totalTarif);
+        sb.append("- total Tarif : Rp").append(Math.round(totalTarif));
         sb.append("\n");
         String formatted = String.format(
                 Locale.getDefault(),
@@ -70,11 +70,11 @@ public class Calculation {
         if (transaction.getStatus() == (short) 0) {
             if (transaction.getPowerFailure() == (short) 0) {
                 // Waktu meja start
-                LocalDateTime begin = LocalDateTime.ofInstant(start.toInstant(), ZoneId.systemDefault());
+                LocalDateTime begin = LocalDateTime.ofInstant(start.toInstant(), ZoneId.systemDefault()).withNano(0);
                 // Waktu sekarang
-                LocalDateTime activeTimer = LocalDateTime.ofInstant(upto.toInstant(), ZoneId.systemDefault());
+                LocalDateTime activeTimer = LocalDateTime.ofInstant(upto.toInstant(), ZoneId.systemDefault()).withNano(0);
                 // Waktu meja berakhir
-                LocalDateTime end = begin.plus(target.getSeconds(), ChronoUnit.SECONDS);
+                LocalDateTime end = begin.plus(target.getSeconds(), ChronoUnit.SECONDS).withNano(0);
                 Duration diffSisa = Duration.between(activeTimer, end);
                 this.sisaWaktu = diffSisa.getSeconds();
 
@@ -84,7 +84,7 @@ public class Calculation {
                 if (rates.size() == 1) {
                     Rate rate = rates.get(0);
                     int every = rate.getEvery();
-                    LocalDateTime time = begin.plus(every, ChronoUnit.SECONDS);
+                    LocalDateTime time = begin.plus(every, ChronoUnit.SECONDS).withNano(0);
 
                     while (time.isBefore(activeTimer) || time.isEqual(activeTimer)) {
                         // increment total tarif
@@ -102,29 +102,29 @@ public class Calculation {
                     for (Rate rate : rates) {
                         LocalTime from = LocalTime.parse(rate.getMFromTime());
                         LocalTime to = LocalTime.parse(rate.getMToTime());
-                        
+
                         // setup from date
                         Calendar calendar = Calendar.getInstance();
                         calendar.setTime(start);
                         calendar.set(Calendar.HOUR_OF_DAY, from.getHour());
                         calendar.set(Calendar.MINUTE, from.getMinute());
                         calendar.set(Calendar.SECOND, from.getSecond());
-                        LocalDateTime fromDate = begin.toLocalTime().isAfter(from) 
-                                ? begin 
-                                : LocalDateTime.ofInstant(calendar.getTime().toInstant(), ZoneId.systemDefault());
-                        
+                        LocalDateTime fromDate = begin.toLocalTime().withNano(0).isAfter(from)
+                                ? begin
+                                : LocalDateTime.ofInstant(calendar.getTime().toInstant(), ZoneId.systemDefault()).withNano(0);
+
                         // setup to date
                         calendar.setTime(upto);
                         calendar.set(Calendar.HOUR_OF_DAY, to.getHour());
                         calendar.set(Calendar.MINUTE, to.getMinute());
                         calendar.set(Calendar.SECOND, to.getSecond());
-                        LocalDateTime toDate = activeTimer.toLocalTime().isBefore(to) 
-                                ? activeTimer 
-                                : LocalDateTime.ofInstant(calendar.getTime().toInstant(), ZoneId.systemDefault());
-                        
+                        LocalDateTime toDate = activeTimer.toLocalTime().withNano(0).isBefore(to)
+                                ? activeTimer
+                                : LocalDateTime.ofInstant(calendar.getTime().toInstant(), ZoneId.systemDefault()).withNano(0);
+
                         int every = rate.getEvery();
 
-                        LocalDateTime time = fromDate.plus(every, ChronoUnit.SECONDS);
+                        LocalDateTime time = fromDate.plus(every, ChronoUnit.SECONDS).withNano(0);
 
                         double total = 0;
                         while (time.isBefore(toDate) || time.isEqual(toDate)) {
@@ -132,13 +132,18 @@ public class Calculation {
                             total += rate.getRate();
                             totalTarif += rate.getRate();
 
+                            StringBuilder sb = new StringBuilder();
+                            sb.append("~ ").append(time);
+                            sb.append(" : Rp").append(rate.getRate());
+                            System.out.println(sb.toString());
+
                             // increment calculation time
                             time = time.plus(every, ChronoUnit.SECONDS);
                         }
-                        
+
                         StringBuilder sb = new StringBuilder();
                         sb.append("$ ").append(rate.getMFromTime()).append("-").append(rate.getMToTime());
-                        sb.append(" : Rp").append(total);
+                        sb.append(" : Rp").append(Math.round(total));
                         System.out.println(sb.toString());
                     }
                 }
