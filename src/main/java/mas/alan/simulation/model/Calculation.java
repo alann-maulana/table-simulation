@@ -113,9 +113,15 @@ public class Calculation {
 
             return;
         }
+        
+        Rate firstRate = null;
 
         // multi range rate
         for (Rate rate : rates) {
+            if (firstRate == null) {
+                firstRate = rate;
+            }
+            
             LocalTime from = LocalTime.parse(rate.getMFromTime());
             LocalTime to = LocalTime.parse(rate.getMToTime());
 
@@ -155,6 +161,10 @@ public class Calculation {
             sb.append("$ ").append(rate.getMFromTime()).append("-").append(rate.getMToTime());
             sb.append(" : Rp").append(Math.round(total));
             System.out.println(sb.toString());
+        }
+
+        if (firstRate != null && totalTarif < firstRate.getMinRate()) {
+            totalTarif = firstRate.getMinRate();
         }
     }
     
