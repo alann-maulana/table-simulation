@@ -100,6 +100,12 @@ public class Calculation {
             Rate rate = rates.get(0);
             int every = rate.getEvery();
             LocalDateTime time = begin.plus(every, ChronoUnit.SECONDS).withNano(0);
+            if (activeTimer.isAfter(end)) {
+                activeTimer = end;
+                if (this.sisaWaktu < 0) {
+                    this.sisaWaktu = 0;
+                }
+            }
 
             while (time.isBefore(activeTimer) || time.isEqual(activeTimer)) {
                 boolean hourIsEqual = activeTimer.getHour() == time.getHour();
