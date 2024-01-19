@@ -62,6 +62,8 @@ public class Calculation {
     private void calculate(TableTransaction transaction, Date upto) {
         Date start = transaction.getStart();
         TablePackage tablePackage = transaction.getTablePackage();
+        // pembulatan in minutes
+        int pembulatan = Integer.parseInt(tablePackage.getPembulatan()) / 60;
 
         ActivePackage activePackage = tablePackage.getActivePackage();
         MRate mRate = activePackage.getRateList();
@@ -87,7 +89,7 @@ public class Calculation {
         this.sisaWaktu = diffSisa.getSeconds();
 
         List<Rate> rates = mRate.getAvailableRates(begin, activeTimer);
-        
+
         // stop if no range rate found
         if (rates.isEmpty()) {
             return;
@@ -100,20 +102,26 @@ public class Calculation {
             LocalDateTime time = begin.plus(every, ChronoUnit.SECONDS).withNano(0);
 
             while (time.isBefore(activeTimer) || time.isEqual(activeTimer)) {
-                // increment total tarif
-                totalTarif += rate.getRate();
+                boolean hourIsEqual = activeTimer.getHour() == time.getHour();
+                // check if time minute greater than pembulatan
+                if (!hourIsEqual || hourIsEqual && activeTimer.getMinute() > pembulatan) {
+                    // increment total tarif
+                    totalTarif += rate.getRate();
+                }
+
+                printRateEveryMinute(rate.getRate(), time);
 
                 // increment calculation time
                 time = time.plus(every, ChronoUnit.SECONDS);
             }
 
-            if (totalTarif < rate.getMinRate()) {
+            if (totalTarif > 0 && totalTarif < rate.getMinRate()) {
                 totalTarif = rate.getMinRate();
             }
 
             return;
         }
-        
+
         Rate firstRate = null;
 
         // multi range rate
@@ -121,19 +129,19 @@ public class Calculation {
             if (firstRate == null) {
                 firstRate = rate;
             }
-            
+
             LocalTime from = LocalTime.parse(rate.getMFromTime());
             LocalTime to = LocalTime.parse(rate.getMToTime());
 
             // setup from date
             Calendar calendar = Calendar.getInstance();
-            setCalendarDateTime(calendar, start, from.getHour(), from.getMinute(), from.getSecond());
+            setCalendarDateTime(calendar, start, from);
             LocalDateTime fromDate = begin.toLocalTime().withNano(0).isAfter(from)
                     ? begin
                     : toLocalDateTime(calendar.getTime());
 
             // setup to date
-            setCalendarDateTime(calendar, upto, to.getHour(), to.getMinute(), to.getSecond());
+            setCalendarDateTime(calendar, upto, to);
             LocalDateTime toDate = activeTimer.toLocalTime().withNano(0).isBefore(to)
                     ? activeTimer
                     : toLocalDateTime(calendar.getTime());
@@ -144,37 +152,49 @@ public class Calculation {
 
             double total = 0;
             while (time.isBefore(toDate) || time.isEqual(toDate)) {
-                // increment total tarif
-                total += rate.getRate();
-                totalTarif += rate.getRate();
+                boolean hourIsEqual = activeTimer.getHour() == time.getHour();
+                // check if time minute greater than pembulatan
+                if (!hourIsEqual || hourIsEqual && time.getMinute() > pembulatan) {
+                    // increment total tarif
+                    total += rate.getRate();
+                    totalTarif += rate.getRate();
 
-                StringBuilder sb = new StringBuilder();
-                sb.append("~ ").append(time);
-                sb.append(" : Rp").append(rate.getRate());
-                System.out.println(sb.toString());
+                    printRateEveryMinute(rate.getRate(), time);
+                }
 
                 // increment calculation time
                 time = time.plus(every, ChronoUnit.SECONDS);
             }
 
-            StringBuilder sb = new StringBuilder();
-            sb.append("$ ").append(rate.getMFromTime()).append("-").append(rate.getMToTime());
-            sb.append(" : Rp").append(Math.round(total));
-            System.out.println(sb.toString());
+            printRateTotal(rate.getMFromTime(), rate.getMToTime(), total);
         }
 
-        if (firstRate != null && totalTarif < firstRate.getMinRate()) {
+        if (firstRate != null && totalTarif > 0 && totalTarif < firstRate.getMinRate()) {
             totalTarif = firstRate.getMinRate();
         }
     }
-    
-    private void setCalendarDateTime(Calendar calendar, Date date, int hour, int minute, int second) {
-        calendar.setTime(date);
-        calendar.set(Calendar.HOUR_OF_DAY, hour);
-        calendar.set(Calendar.MINUTE, minute);
-        calendar.set(Calendar.SECOND, second);
+
+    private void printRateEveryMinute(double rate, LocalDateTime time) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("~ ").append(time);
+        sb.append(" : Rp").append(rate);
+        System.out.println(sb.toString());
     }
-    
+
+    private void printRateTotal(String from, String to, double total) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("$ ").append(from).append("-").append(to);
+        sb.append(" : Rp").append(Math.round(total));
+        System.out.println(sb.toString());
+    }
+
+    private void setCalendarDateTime(Calendar calendar, Date date, LocalTime time) {
+        calendar.setTime(date);
+        calendar.set(Calendar.HOUR_OF_DAY, time.getHour());
+        calendar.set(Calendar.MINUTE, time.getMinute());
+        calendar.set(Calendar.SECOND, time.getSecond());
+    }
+
     private LocalDateTime toLocalDateTime(Date date) {
         return LocalDateTime.ofInstant(date.toInstant(), ZoneId.systemDefault()).withNano(0);
     }

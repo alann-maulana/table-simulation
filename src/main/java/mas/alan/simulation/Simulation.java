@@ -1,7 +1,6 @@
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  */
-
 package mas.alan.simulation;
 
 import java.time.Duration;
@@ -17,60 +16,73 @@ import mas.alan.simulation.model.Calculation;
  * @author maulana
  */
 public class Simulation {
+
     public static void main(String[] args) {
         final TablePackage multiRatePackage = newMultiRateTablePackage();
         Calendar cal = Calendar.getInstance();
-        
+
         /*
         Transaction 1 : 
         - start  = 2023-12-30 16:00:00
         - target = 2 jam 30 menit
-        */        
+         */
         System.out.println("timer start from 2023-12-30 16:00:00");
         System.out.println("timer stop at 2023-12-30 18:30:00");
         System.out.println("------------------------------------");
         cal.set(2023, 12, 30, 16, 0, 0);
         TableTransaction trs1 = newTransaction(station1(), multiRatePackage, cal.getTime(), 2, 30);
-        
+
+        // timer up to 2023-12-30 16:05:00
+        cal.set(2023, 12, 30, 16, 5, 0);
+        System.out.println("timer up to 2023-12-30 16:05:00");
+        Calculation calc5Min = new Calculation(trs1, cal.getTime());
+        System.out.println(calc5Min.toString() + "\n");
+
+        // timer up to 2023-12-30 16:06:00
+        cal.set(2023, 12, 30, 16, 6, 0);
+        System.out.println("timer up to 2023-12-30 16:06:00");
+        Calculation calc6Min = new Calculation(trs1, cal.getTime());
+        System.out.println(calc6Min.toString() + "\n");
+
         // timer up to 2023-12-30 16:30:00
         cal.set(2023, 12, 30, 16, 30, 0);
         System.out.println("timer up to 2023-12-30 16:30:00");
         Calculation calc30Min = new Calculation(trs1, cal.getTime());
         System.out.println(calc30Min.toString() + "\n");
-        
+
         // timer up to 2023-12-30 16:45:00
         cal.set(2023, 12, 30, 16, 45, 0);
         System.out.println("timer up to 2023-12-30 16:45:00");
         Calculation calc45Min = new Calculation(trs1, cal.getTime());
         System.out.println(calc45Min.toString() + "\n");
-        
+
         // timer up to 2023-12-30 17:10:00
         cal.set(2023, 12, 30, 17, 10, 0);
         System.out.println("timer up to 2023-12-30 17:10:00");
         Calculation calc70Min = new Calculation(trs1, cal.getTime());
         System.out.println(calc70Min.toString() + "\n");
-        
+
         // timer up to 2023-12-30 18:05:00
         cal.set(2023, 12, 30, 18, 5, 0);
         System.out.println("timer up to 2023-12-30 18:05:00");
         Calculation calc125Min = new Calculation(trs1, cal.getTime());
         System.out.println(calc125Min.toString() + "\n");
-        
+
         // timer up to 2023-12-30 18:30:00
         cal.set(2023, 12, 30, 18, 30, 0);
         System.out.println("timer up to 2023-12-30 18:30:00");
         Calculation calc150Min = new Calculation(trs1, cal.getTime());
         System.out.println(calc150Min.toString() + "\n");
     }
-    
+
     private static TablePackage newMultiRateTablePackage() {
         /*
         START      FINISH       RATE        MINRATE     EVERY
         11:00:00 - 17:59:59     Rp666.6     Rp40000     00:01:00
         18:00:00 - 23:59:59     Rp833.3     Rp50000     00:01:00
         00:00:00 - 10:59:59     Rp833.3     Rp50000     00:01:00
-        */
-        
+         */
+
         TablePackage tablePackage = new TablePackage();
         tablePackage.setId(41);
         tablePackage.setName("Regular");
@@ -84,18 +96,18 @@ public class Simulation {
         tablePackage.setDays("{\"days\": [\"Sunday\",\"Monday\",\"Tuesday\",\"Wednesday\",\"Thursday\",\"Friday\",\"Saturday\"]}");
         tablePackage.setStopSetelah("00:00:00");
         tablePackage.setDeleted(Short.parseShort("0"));
-        tablePackage.setPembulatan("0");
-        
+        tablePackage.setPembulatan("300");
+
         return tablePackage;
     }
-    
+
     private static Station station1() {
         Station station = new Station();
         station.setId(1);
         station.setName("Meja 1");
         return station;
     }
-    
+
     private static TableTransaction newTransaction(Station station, TablePackage tablePackage, Date start, int hour, int minute) {
         TableTransaction transaction = new TableTransaction();
         transaction.setId(1);
