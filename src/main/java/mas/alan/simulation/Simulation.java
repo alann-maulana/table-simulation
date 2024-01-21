@@ -90,6 +90,23 @@ public class Simulation {
         System.out.println("timer up to 2023-12-30 16:01:00");
         Calculation calc61Min = new Calculation(trs2, cal.getTime());
         System.out.println(calc61Min.toString() + "\n");
+        
+        /*
+        Transaction 3 : 
+        - start  = 2023-12-30 23:00:00
+        - target = 4 jam 30 menit
+         */
+        System.out.println("timer start from 2023-12-30 23:00:00");
+        System.out.println("timer stop at 2023-12-31 03:30:00");
+        System.out.println("------------------------------------");
+        cal.set(2023, 12, 30, 23, 0, 0);
+        TableTransaction trs3 = newTransaction(station1(), multiRatePackage, cal.getTime(), 4, 30);
+
+        // timer up to 2023-12-31 02:45:00
+        cal.set(2023, 12, 31, 2, 45, 0);
+        System.out.println("timer up to 2023-12-31 02:45:00");
+        Calculation calc225Min = new Calculation(trs3, cal.getTime());
+        System.out.println(calc225Min.toString() + "\n");
     }
 
     private static TablePackage newMultiRateTablePackage() {
