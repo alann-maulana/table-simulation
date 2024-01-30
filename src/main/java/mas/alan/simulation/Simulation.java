@@ -22,11 +22,11 @@ public class Simulation {
 
         /*
         Transaction 1 : 
-        - start  = 2023-12-30 16:00:00
+        - start  = 2023-12-30 16:03:00
         - target = 2 jam 30 menit
          */
         System.out.println("timer start from 2023-12-30 16:03:00");
-        System.out.println("timer stop at 2023-12-30 18:30:00");
+        System.out.println("timer stop at 2023-12-30 18:33:00");
         System.out.println("------------------------------------");
         cal.set(2023, 12, 30, 16, 3, 0);
         TableTransaction trs1 = newTransaction(station1(), multiRatePackage, cal.getTime(), 2, 30);
