@@ -37,9 +37,9 @@ public class Simulation {
         Calculation calc5Min = new Calculation(trs1, cal.getTime());
         System.out.println(calc5Min.toString() + "\n");
 
-        // timer up to 2023-12-30 16:06:00
-        cal.set(2023, 12, 30, 16, 6, 0);
-        System.out.println("timer up to 2023-12-30 16:06:00");
+        // timer up to 2023-12-30 16:08:00
+        cal.set(2023, 12, 30, 16, 8, 0);
+        System.out.println("timer up to 2023-12-30 16:08:00");
         Calculation calc6Min = new Calculation(trs1, cal.getTime());
         System.out.println(calc6Min.toString() + "\n");
 
