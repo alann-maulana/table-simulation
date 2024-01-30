@@ -3,7 +3,6 @@
  */
 package mas.alan.simulation;
 
-import java.time.Duration;
 import java.util.Calendar;
 import java.util.Date;
 import mas.alan.simulation.entity.Station;
@@ -26,10 +25,10 @@ public class Simulation {
         - start  = 2023-12-30 16:00:00
         - target = 2 jam 30 menit
          */
-        System.out.println("timer start from 2023-12-30 16:00:00");
+        System.out.println("timer start from 2023-12-30 16:03:00");
         System.out.println("timer stop at 2023-12-30 18:30:00");
         System.out.println("------------------------------------");
-        cal.set(2023, 12, 30, 16, 0, 0);
+        cal.set(2023, 12, 30, 16, 3, 0);
         TableTransaction trs1 = newTransaction(station1(), multiRatePackage, cal.getTime(), 2, 30);
 
         // timer up to 2023-12-30 16:05:00
@@ -93,13 +92,13 @@ public class Simulation {
         
         /*
         Transaction 3 : 
-        - start  = 2023-12-30 23:00:00
+        - start  = 2023-12-30 23:02:00
         - target = 4 jam 30 menit
          */
-        System.out.println("timer start from 2023-12-30 23:00:00");
-        System.out.println("timer stop at 2023-12-31 03:30:00");
+        System.out.println("timer start from 2023-12-30 23:02:00");
+        System.out.println("timer stop at 2023-12-31 03:32:00");
         System.out.println("------------------------------------");
-        cal.set(2023, 12, 30, 23, 0, 0);
+        cal.set(2023, 12, 30, 23, 2, 0);
         TableTransaction trs3 = newTransaction(station1(), multiRatePackage, cal.getTime(), 4, 30);
 
         // timer up to 2023-12-31 02:45:00
@@ -122,7 +121,7 @@ public class Simulation {
         tablePackage.setName("Regular");
         tablePackage.setPrice("3000");
         tablePackage.setMultiRate("666.6666666666666~833.3333333333334~833.3333333333334");
-        tablePackage.setMultiEvery("00:01:00,00:01:00,00:01:00");
+        tablePackage.setMultiEvery("00:05:00,00:05:00,00:05:00");
         tablePackage.setMultiMinRate("40000.0,50000.0,50000.0");
         tablePackage.setMFrom("11:00:00,18:00:00,00:00:00");
         tablePackage.setMTo("17:59:59,23:59:59,10:59:59");
