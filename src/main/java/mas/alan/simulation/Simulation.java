@@ -120,9 +120,9 @@ public class Simulation {
         tablePackage.setId(41);
         tablePackage.setName("Regular");
         tablePackage.setPrice("3000");
-        tablePackage.setMultiRate("666.6666666666666~833.3333333333334~833.3333333333334");
-        tablePackage.setMultiEvery("00:05:00,00:05:00,00:05:00");
-        tablePackage.setMultiMinRate("40000.0,50000.0,50000.0");
+        tablePackage.setMultiRate("22500~17500~22500");
+        tablePackage.setMultiEvery("00:30:00,00:30:00,00:30:00");
+        tablePackage.setMultiMinRate("45000.0,35000.0,45000.0");
         tablePackage.setMFrom("11:00:00,18:00:00,00:00:00");
         tablePackage.setMTo("17:59:59,23:59:59,10:59:59");
         tablePackage.setStations("{\"stations\": [1,2,4,7,8,9,10,11,12,18,19,20,21,22,23]}");
